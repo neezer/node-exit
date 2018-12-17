@@ -1,0 +1,30 @@
+{
+  "name": "@neezer/exit",
+  "version": "0.0.0-semantically-released",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "author": "Evan Sherwood <evan@sherwood.io>",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "@types/debug": "^0.0.31",
+    "@types/node": "^10.12.15",
+    "prettier": "^1.15.3",
+    "rimraf": "^2.6.2",
+    "semantic-release": "^15.13.1",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.17.0",
+    "typescript": "^3.2.2"
+  },
+  "dependencies": {
+    "debug": "^4.1.0"
+  },
+  "scripts": {
+    "build": "yarn clean && tsc",
+    "clean": "rimraf dist"
+  }
+}
