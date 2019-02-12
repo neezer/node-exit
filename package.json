@@ -11,6 +11,7 @@
   "license": "MIT",
   "private": false,
   "devDependencies": {
+    "@commitlint/config-conventional": "^7.5.0",
     "@types/debug": "^0.0.31",
     "@types/node": "^10.12.15",
     "prettier": "^1.15.3",
