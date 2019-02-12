@@ -13,8 +13,8 @@ export function exit(tuples: ExitTuple[]) {
 
   let shutdownRequested = false;
 
-  const handleExit = (code: number) => () => {
-    if (shutdownRequested) {
+  const handleExit = (code: number, programaticExit: boolean = false) => () => {
+    if (shutdownRequested && !programaticExit) {
       debug("kill requested");
       uncleanExit();
     } else {
@@ -29,7 +29,7 @@ export function exit(tuples: ExitTuple[]) {
         emitter.on(target, () => {
           results.push(true);
 
-          if (results.length === tuples.length) {
+          if (results.length === tuples.length && !programaticExit) {
             cleanExit(code);
           }
         });
@@ -38,7 +38,10 @@ export function exit(tuples: ExitTuple[]) {
       });
     } catch (error) {
       console.log("error exiting application", error);
-      uncleanExit();
+
+      if (!programaticExit) {
+        uncleanExit();
+      }
     }
   };
 
@@ -52,4 +55,9 @@ export function exit(tuples: ExitTuple[]) {
 
   process.on("SIGINT", handleExit(SIGINT));
   process.on("SIGTERM", handleExit(SIGTERM));
+
+  return {
+    sigint: handleExit(SIGINT, true),
+    sigterm: handleExit(SIGTERM, true)
+  };
 }
