@@ -2,7 +2,7 @@ import { SIGINT, SIGKILL, SIGTERM } from "constants";
 import makeDebug from "debug";
 import EventEmitter from "events";
 
-const debug = makeDebug("@neezer/exit");
+const debug = makeDebug("exit");
 
 type TriggerEvent = string;
 type ReturnEvent = string;
