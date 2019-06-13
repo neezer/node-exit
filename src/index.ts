@@ -2,7 +2,7 @@ import { SIGINT, SIGKILL, SIGTERM } from "constants";
 import makeDebug from "debug";
 import EventEmitter from "events";
 
-const debug = makeDebug("node-exit");
+const debug = makeDebug("@neezer/exit");
 
 type TriggerEvent = string;
 type ReturnEvent = string;
@@ -37,7 +37,9 @@ export function exit(tuples: ExitTuple[]) {
         emitter.emit(source);
       });
     } catch (error) {
-      console.log("error exiting application", error);
+      process.stderr.write(
+        `@neezer/exit encountered an error shutting down: ${error}`
+      );
 
       if (!programaticExit) {
         uncleanExit();
@@ -46,10 +48,12 @@ export function exit(tuples: ExitTuple[]) {
   };
 
   const cleanExit = (code: number) => {
+    debug("cleanly shutdown");
     process.exit(code);
   };
 
   const uncleanExit = () => {
+    debug("forced shutdown");
     process.exit(SIGKILL);
   };
 
