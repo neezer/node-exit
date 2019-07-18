@@ -2,8 +2,8 @@ import { SIGINT, SIGKILL, SIGTERM } from "constants";
 import makeDebug from "debug";
 import EventEmitter from "events";
 
-export const INITIATE_EXIT = Symbol.for("@@node-exit/initiate-exit");
-export const COMPLETE_EXIT = Symbol.for("@@node-exit/complete-exit");
+export const INITIATE_EXIT = "@@node-exit/initiate-exit";
+export const COMPLETE_EXIT = "@@node-exit/complete-exit";
 
 const debug = makeDebug("exit");
 
