@@ -28,14 +28,14 @@ import { createServer } from "http";
 const server = createServer(/* ... */);
 
 server.on(INITIATE_EXIT, () => {
-  server.on("close", () => {
-    server.emit(COMPLETE_EXIT);
-  });
-
   server.close();
 });
 
-return server;
+server.on("close", () => {
+  server.emit(COMPLETE_EXIT);
+});
+
+export default server;
 ```
 
 In some cases, you need to wrap the client/server interface in an EventEmitter yourself:
@@ -56,7 +56,7 @@ status.on(INITIATE_EXIT, () => {
   });
 });
 
-return status;
+export default status;
 ```
 
 Then—in your top-level entry file—you can pass these event emitters to exit:
