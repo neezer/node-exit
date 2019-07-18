@@ -2,13 +2,12 @@ import { SIGINT, SIGKILL, SIGTERM } from "constants";
 import makeDebug from "debug";
 import EventEmitter from "events";
 
+export const INITIATE_EXIT = Symbol.for("@@node-exit/initiate-exit");
+export const COMPLETE_EXIT = Symbol.for("@@node-exit/complete-exit");
+
 const debug = makeDebug("exit");
 
-type TriggerEvent = string;
-type ReturnEvent = string;
-type ExitTuple = [EventEmitter, TriggerEvent, ReturnEvent];
-
-export function exit(tuples: ExitTuple[]) {
+export function exit(...emitters: EventEmitter[]) {
   const results: boolean[] = [];
 
   let shutdownRequested = false;
@@ -23,18 +22,16 @@ export function exit(tuples: ExitTuple[]) {
     }
 
     try {
-      tuples.forEach(tuple => {
-        const [emitter, source, target] = tuple;
-
-        emitter.on(target, () => {
+      emitters.forEach(emitter => {
+        emitter.on(INITIATE_EXIT, () => {
           results.push(true);
 
-          if (results.length === tuples.length && !programaticExit) {
+          if (results.length === emitters.length && !programaticExit) {
             cleanExit(code);
           }
         });
 
-        emitter.emit(source);
+        emitter.emit(COMPLETE_EXIT);
       });
     } catch (error) {
       process.stderr.write(
