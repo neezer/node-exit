@@ -28,7 +28,7 @@ export function exit(...emitters: EventEmitter[]) {
 
     try {
       knownEmitters.forEach(emitter => {
-        emitter.on(INITIATE_EXIT, () => {
+        emitter.on(COMPLETE_EXIT, () => {
           results.push(true);
 
           if (results.length === knownEmitters.length && !programaticExit) {
@@ -36,7 +36,7 @@ export function exit(...emitters: EventEmitter[]) {
           }
         });
 
-        emitter.emit(COMPLETE_EXIT);
+        emitter.emit(INITIATE_EXIT);
       });
     } catch (error) {
       process.stderr.write(
