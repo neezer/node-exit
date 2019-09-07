@@ -80,3 +80,8 @@ cleanly.
 
 If one of the child pieces does not exit cleanly or times out, the library will
 exit the main application thread with a status code of `1`.
+
+### Why?
+
+I found myself copy-pasting a lot of the signal handling code from repo to repo,
+so extraced it out into this interface instead.

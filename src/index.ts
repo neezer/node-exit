@@ -7,8 +7,13 @@ export const COMPLETE_EXIT = "@@node-exit/complete-exit";
 
 const debug = makeDebug("exit");
 
+let knownEmitters: EventEmitter[] = [];
+let processListenersBound = false;
+
 export function exit(...emitters: EventEmitter[]) {
   const results: boolean[] = [];
+
+  knownEmitters = knownEmitters.concat(emitters);
 
   let shutdownRequested = false;
 
@@ -22,11 +27,11 @@ export function exit(...emitters: EventEmitter[]) {
     }
 
     try {
-      emitters.forEach(emitter => {
+      knownEmitters.forEach(emitter => {
         emitter.on(INITIATE_EXIT, () => {
           results.push(true);
 
-          if (results.length === emitters.length && !programaticExit) {
+          if (results.length === knownEmitters.length && !programaticExit) {
             cleanExit(code);
           }
         });
@@ -54,8 +59,12 @@ export function exit(...emitters: EventEmitter[]) {
     process.exit(SIGKILL);
   };
 
-  process.on("SIGINT", handleExit(SIGINT));
-  process.on("SIGTERM", handleExit(SIGTERM));
+  if (!processListenersBound) {
+    process.on("SIGINT", handleExit(SIGINT));
+    process.on("SIGTERM", handleExit(SIGTERM));
+
+    processListenersBound = true;
+  }
 
   return {
     sigint: handleExit(SIGINT, true),
