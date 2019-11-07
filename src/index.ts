@@ -1,4 +1,4 @@
-import { SIGINT, SIGKILL, SIGTERM } from "constants";
+import { SIGINT, SIGKILL, SIGTERM, SIGQUIT } from "constants";
 import makeDebug from "debug";
 import EventEmitter from "events";
 
@@ -62,12 +62,8 @@ export function exit(...emitters: EventEmitter[]) {
   if (!processListenersBound) {
     process.on("SIGINT", handleExit(SIGINT));
     process.on("SIGTERM", handleExit(SIGTERM));
+    process.on("SIGQUIT", handleExit(SIGQUIT, true));
 
     processListenersBound = true;
   }
-
-  return {
-    sigint: handleExit(SIGINT, true),
-    sigterm: handleExit(SIGTERM, true)
-  };
 }
