@@ -17,8 +17,8 @@ export function exit(...emitters: EventEmitter[]) {
 
   let shutdownRequested = false;
 
-  const handleExit = (code: number, programaticExit: boolean = false) => () => {
-    if (shutdownRequested && !programaticExit) {
+  const handleExit = (code: number) => () => {
+    if (shutdownRequested) {
       debug("kill requested");
       uncleanExit();
     } else {
@@ -31,7 +31,7 @@ export function exit(...emitters: EventEmitter[]) {
         emitter.on(COMPLETE_EXIT, () => {
           results.push(true);
 
-          if (results.length === knownEmitters.length && !programaticExit) {
+          if (results.length === knownEmitters.length) {
             cleanExit(code);
           }
         });
@@ -43,9 +43,7 @@ export function exit(...emitters: EventEmitter[]) {
         `@neezer/exit encountered an error shutting down: ${error}`
       );
 
-      if (!programaticExit) {
-        uncleanExit();
-      }
+      uncleanExit();
     }
   };
 
@@ -62,7 +60,7 @@ export function exit(...emitters: EventEmitter[]) {
   if (!processListenersBound) {
     process.on("SIGINT", handleExit(SIGINT));
     process.on("SIGTERM", handleExit(SIGTERM));
-    process.on("SIGQUIT", handleExit(SIGQUIT, true));
+    process.on("SIGQUIT", handleExit(SIGQUIT));
 
     processListenersBound = true;
   }
